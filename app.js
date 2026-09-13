@@ -376,3 +376,171 @@ faqItems.forEach((item) => {
     }
   });
 });
+
+const certificatesSlider = document.querySelector(".certificates-slider");
+
+if (certificatesSlider) {
+  const track = certificatesSlider.querySelector("[data-certificates-track]");
+  const cards = [...certificatesSlider.querySelectorAll(".certificate-card")];
+  const prevButtons = certificatesSlider.querySelectorAll(
+    "[data-certificates-prev]",
+  );
+  const nextButtons = certificatesSlider.querySelectorAll(
+    "[data-certificates-next]",
+  );
+  const currentCounter = certificatesSlider.querySelector(
+    "[data-certificates-current]",
+  );
+  const progress = certificatesSlider.querySelector(
+    "[data-certificates-progress]",
+  );
+
+  let currentIndex = 0;
+
+  function getCertificatesVisibleCards() {
+    return window.innerWidth <= 760 ? 1 : 2;
+  }
+
+  function getCertificatesMaxIndex() {
+    return Math.max(0, cards.length - getCertificatesVisibleCards());
+  }
+
+  function updateCertificatesSlider() {
+    const visibleCards = getCertificatesVisibleCards();
+    const gap = window.innerWidth <= 760 ? 0 : 24;
+    const viewportWidth = track.parentElement.clientWidth;
+
+    const cardWidth =
+      visibleCards === 1 ? viewportWidth : (viewportWidth - gap) / visibleCards;
+
+    const offset = currentIndex * (cardWidth + gap);
+
+    track.style.transform = `translateX(-${offset}px)`;
+
+    if (currentCounter) {
+      currentCounter.textContent = String(currentIndex + 1).padStart(2, "0");
+    }
+
+    if (progress) {
+      const progressStep = 100 / cards.length;
+
+      progress.style.width = `${progressStep}%`;
+      progress.style.transform = `translateX(${currentIndex * 100}%)`;
+    }
+
+    prevButtons.forEach((button) => {
+      button.disabled = currentIndex === 0;
+    });
+
+    nextButtons.forEach((button) => {
+      button.disabled = currentIndex >= getCertificatesMaxIndex();
+    });
+  }
+
+  nextButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (currentIndex < getCertificatesMaxIndex()) {
+        currentIndex += 1;
+        updateCertificatesSlider();
+      }
+    });
+  });
+
+  prevButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex -= 1;
+        updateCertificatesSlider();
+      }
+    });
+  });
+
+  let touchStartX = 0;
+
+  track.addEventListener(
+    "touchstart",
+    (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+    },
+    { passive: true },
+  );
+
+  track.addEventListener(
+    "touchend",
+    (event) => {
+      const touchEndX = event.changedTouches[0].clientX;
+      const distance = touchStartX - touchEndX;
+
+      if (Math.abs(distance) < 45) return;
+
+      if (distance > 0 && currentIndex < getCertificatesMaxIndex()) {
+        currentIndex += 1;
+      }
+
+      if (distance < 0 && currentIndex > 0) {
+        currentIndex -= 1;
+      }
+
+      updateCertificatesSlider();
+    },
+    { passive: true },
+  );
+
+  window.addEventListener("resize", () => {
+    currentIndex = Math.min(currentIndex, getCertificatesMaxIndex());
+
+    updateCertificatesSlider();
+  });
+
+  updateCertificatesSlider();
+}
+
+const certificateLightbox = document.querySelector(
+  "[data-certificate-lightbox]",
+);
+
+if (certificateLightbox) {
+  const lightboxImage = certificateLightbox.querySelector(
+    "[data-certificate-lightbox-image]",
+  );
+
+  const openButtons = document.querySelectorAll("[data-certificate-open]");
+
+  const closeButtons = certificateLightbox.querySelectorAll(
+    "[data-certificate-close]",
+  );
+
+  function closeCertificateLightbox() {
+    certificateLightbox.classList.remove("is-open");
+    certificateLightbox.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  openButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      lightboxImage.src = button.dataset.certificateImage;
+
+      const image = button.querySelector("img");
+
+      lightboxImage.alt = image ? image.alt : "";
+
+      certificateLightbox.classList.add("is-open");
+      certificateLightbox.setAttribute("aria-hidden", "false");
+
+      document.body.style.overflow = "hidden";
+    });
+  });
+
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", closeCertificateLightbox);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (
+      event.key === "Escape" &&
+      certificateLightbox.classList.contains("is-open")
+    ) {
+      closeCertificateLightbox();
+    }
+  });
+}
