@@ -3,7 +3,7 @@
   --ink: #171717;
   --sage: #8fa89b;
   --forest: #566b61;
-  --sand: #e6d6be;
+  --sand: #c99b4f;
   --mist: #e9efea;
   --soft-white: #f6f8f4;
   --serif: "Prata", Georgia, serif;
@@ -3826,34 +3826,58 @@ button {
 .site-footer__social {
   width: 52px;
   height: 52px;
-  border: 1px solid rgba(86, 107, 97, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--forest);
+
+  /* красивий золотий градієнт */
+  background: linear-gradient(135deg, #e6c47a 0%, #c99b4f 45%, #a97832 100%);
+
+  color: #fff;
+
+  box-shadow:
+    0 6px 18px rgba(169, 120, 50, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
   transition:
     background 0.4s var(--ease),
     color 0.4s var(--ease),
     border-color 0.4s var(--ease),
-    transform 0.4s var(--ease);
+    transform 0.4s var(--ease),
+    box-shadow 0.4s var(--ease);
 }
 
 .site-footer__social svg {
-  width: 19px;
-  height: 19px;
+  width: 20px;
+  height: 20px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.25;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
+/* LinkedIn path у тебе залитий, а не stroke */
 .site-footer__social:last-child svg {
-  width: 20px;
-  height: 20px;
   fill: currentColor;
   stroke: none;
+}
+
+@media (hover: hover) {
+  .site-footer__social:hover {
+    background: #fff;
+    color: #b8893f;
+    border-color: rgba(184, 137, 63, 0.45);
+
+    transform: translateY(-4px);
+
+    box-shadow:
+      0 8px 24px rgba(86, 107, 97, 0.12),
+      0 0 0 1px rgba(184, 137, 63, 0.08);
+  }
 }
 
 .site-footer__right {
@@ -4711,4 +4735,13 @@ button {
 
 .site-footer__legal a:hover::after {
   transform: scaleX(1);
+}
+
+.service-card__number {
+  background: linear-gradient(135deg, #e6c47a 0%, #c99b4f 45%, #a97832 100%);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
